@@ -83,7 +83,7 @@ const Matches = () => {
             color: 'white',
             fontSize: 18,
             textAlign: 'center',
-            marginTop: 20
+            marginTop: 19
           }}>
             Oops, no match for you
           </Text>

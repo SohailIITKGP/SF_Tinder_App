@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { ImageBackground, Text, View, Button, Alert,TouchableOpacity } from 'react-native';
+import { ImageBackground, Text, View, Button, Alert, TouchableOpacity,Image } from 'react-native';
 import TinderCard from 'react-tinder-card';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { FontAwesome } from '@expo/vector-icons';
+import bg from "../../assets/Background1.png"
 
 
 const Card = () => {
@@ -18,7 +19,7 @@ const Card = () => {
       try {
         const storedToken = await AsyncStorage.getItem('token');
         if (storedToken) {
-     
+
           setToken(JSON.parse(storedToken));
         }
       } catch (error) {
@@ -32,7 +33,9 @@ const Card = () => {
   const fetchUsers = async () => {
     if (!token) return;
     try {
-      console.log("token is ",token);
+
+      console.log("token is ", token);
+
       const response = await axios.get('http://10.105.51.160:3000/getUsers', {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -60,8 +63,8 @@ const Card = () => {
 
   const swiped = async (direction, nameToDelete) => {
     const characterId = characters.find(character => character.name === nameToDelete)?.id;
-    console.log("chracterid is ",characterId);
-    console.log("dirrection is ",direction)
+    console.log("chracterid is ", characterId);
+    console.log("dirrection is ", direction)
     if (direction === 'right') {
       console.log("calling liked user")
       await likeUser(characterId);
@@ -94,8 +97,10 @@ const Card = () => {
       const response = await axios.post('http://10.105.51.160:3000/like', { likedUserId }, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("response is ",response)
-      alert(response.data === "It's a match!" ? 'It\'s a match!' : 'User liked successfully!');
+      console.log("response is ", response)
+      if(response.data === "It's a match!"){
+      'It\'s a match!'
+      } ;
     } catch (error) {
       console.error('Error liking user', error);
     }
@@ -113,6 +118,7 @@ const Card = () => {
 
   return (
     <View style={styles.container}>
+       <Image style={styles.patternbg} source={bg} />
       <Text style={styles.header}></Text>
       <View style={styles.cardContainer}>
         {characters.map((character, index) => (
@@ -136,12 +142,12 @@ const Card = () => {
         ))}
       </View>
       <View style={styles.buttonsContainer}>
-         <TouchableOpacity onPress={() => swipe('left')} style={styles.button}>
-             <FontAwesome name="times" size={32} color="red" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => swipe('right')} style={styles.button}>
-            <FontAwesome name="heart" size={32} color="green" />
-          </TouchableOpacity>
+        <TouchableOpacity onPress={() => swipe('left')} style={styles.button}>
+          <FontAwesome name="times" size={47} color="red" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => swipe('right')} style={styles.button}>
+          <FontAwesome name="heart" size={47} color="green" />
+        </TouchableOpacity>
       </View>
       {lastDirection ? (
         <Text style={styles.infoText} key={lastDirection}></Text>
@@ -160,6 +166,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
+    height:'100%'
   },
   header: {
     color: '#000',
@@ -177,11 +184,11 @@ const styles = {
     width: '100%',
     maxWidth: 260,
     height: 300,
-    shadowColor: 'black',
-    shadowOpacity: 0.2,
+    shadowColor: 'yellow',
+    shadowOpacity: 0.7,
     shadowRadius: 20,
     borderRadius: 20,
-    resizeMode: 'cover',
+    resizeMode: 'cover'
   },
   cardImage: {
     width: '100%',
@@ -209,6 +216,11 @@ const styles = {
     flexDirection: 'row',
     width: '60%',
     marginTop: 10,
-    gap: 150
+    gap: 130
+  },
+  patternbg: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
   },
 };
