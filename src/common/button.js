@@ -2,6 +2,7 @@ module.exports = {
     button1: {
         backgroundColor: '#42434B',
         color: '#fff',
+        marginTop: 60,
         padding: 10,
         borderRadius: 5,
         fontSize: 20,

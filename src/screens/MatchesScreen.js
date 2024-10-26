@@ -45,7 +45,7 @@ const Matches = () => {
   const fetchMatches = async () => {
     try {
       const formattedToken = token.replace(/^"|"$/g, '');
-      const response = await axios.get('http://192.168.12.114:3000/matches', {
+      const response = await axios.get('http://10.105.51.160:3000/matches', {
         headers: { Authorization: `Bearer ${formattedToken}` },
       });
       if (response.data && response.data.matches) {

@@ -33,7 +33,7 @@ const Card = () => {
     if (!token) return;
     try {
       console.log("token is ",token);
-      const response = await axios.get('http://192.168.12.114:3000/getUsers', {
+      const response = await axios.get('http://10.105.51.160:3000/getUsers', {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = response.data;
@@ -91,7 +91,7 @@ const Card = () => {
 
   const likeUser = async (likedUserId) => {
     try {
-      const response = await axios.post('http://192.168.12.114:3000/like', { likedUserId }, {
+      const response = await axios.post('http://10.105.51.160:3000/like', { likedUserId }, {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log("response is ",response)
@@ -103,7 +103,7 @@ const Card = () => {
 
   const dislikeUser = async (dislikedUserId) => {
     try {
-      await axios.post('http://192.168.12.114:3000/dislike', { dislikedUserId }, {
+      await axios.post('http://10.105.51.160:3000/dislike', { dislikedUserId }, {
         headers: { Authorization: `Bearer ${token}` },
       });
     } catch (error) {

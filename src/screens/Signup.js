@@ -190,7 +190,7 @@ const Signup = ({ navigation }) => {
 
   const Sendtobackend = async () => {
     try {
-      const response = await fetch("http://192.168.12.114:3000/register", {
+      const response = await fetch("http://10.105.51.160:3000/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

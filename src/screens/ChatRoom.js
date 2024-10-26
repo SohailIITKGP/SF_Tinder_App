@@ -54,7 +54,7 @@ const ChatRoom = ({ route }) => {
   }, [receiverId]);
 
   const initializeSocket = (currentUserId) => {
-    socketRef.current = io('http://192.168.12.114:3000', {
+    socketRef.current = io('http://10.105.51.160:3000', {
       transports: ['websocket'],
       query: { userId: currentUserId }
     });
@@ -94,7 +94,7 @@ const ChatRoom = ({ route }) => {
 
   const fetchMessages = async (currentToken, currentUserId) => {
     try {
-      const response = await fetch(`http://192.168.12.114:3000/messages/${receiverId}`, {
+      const response = await fetch(`http://10.105.51.160:3000/messages/${receiverId}`, {
         headers: { Authorization: `Bearer ${currentToken}` },
       });
 
@@ -153,7 +153,7 @@ const ChatRoom = ({ route }) => {
     }, 100);
 
     try {
-      const response = await fetch('http://192.168.12.114:3000/send-message', {
+      const response = await fetch('http://10.105.51.160:3000/send-message', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
