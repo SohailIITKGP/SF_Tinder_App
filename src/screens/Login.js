@@ -31,7 +31,7 @@ const Login = ({ navigation }) => {
             return;
         }
         else {
-            fetch('http://192.168.12.114:3000/login', {
+            fetch('http://192.168.156.69:3000/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -61,7 +61,7 @@ const Login = ({ navigation }) => {
                         if (!user) {
                             try {
                                 console.log("the authorization is ", `Bearer ${formattedToken}`);
-                                const response = await axios.get('http://192.168.12.114:3000/user', {
+                                const response = await axios.get('http://192.168.156.69:3000/user', {
                                     headers: {
                                         Authorization: `Bearer ${formattedToken}`
                                     }
@@ -82,7 +82,7 @@ const Login = ({ navigation }) => {
 
                         }
                         else {
-                            const response = await axios.get('http://192.168.12.114:3000/user', {
+                            const response = await axios.get('http://192.168.156.69:3000/user', {
                                 headers: {
                                     Authorization: `Bearer ${formattedToken}`
                                 }
