@@ -190,7 +190,7 @@ const Signup = ({ navigation }) => {
 
   const Sendtobackend = async () => {
     try {
-      const response = await fetch("http://10.105.51.160:3000/register", {
+      const response = await fetch("https://lol-2eal.onrender.com/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

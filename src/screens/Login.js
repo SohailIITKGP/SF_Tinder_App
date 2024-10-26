@@ -31,7 +31,7 @@ const Login = ({ navigation }) => {
             return;
         }
         else {
-            fetch('http://10.105.51.160:3000/login', {
+            fetch('https://lol-2eal.onrender.com/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -61,7 +61,7 @@ const Login = ({ navigation }) => {
                         if (!user) {
                             try {
                                 console.log("the authorization is ", `Bearer ${formattedToken}`);
-                                const response = await axios.get('http://10.105.51.160:3000/user', {
+                                const response = await axios.get('https://lol-2eal.onrender.com/user', {
                                     headers: {
                                         Authorization: `Bearer ${formattedToken}`
                                     }
@@ -82,7 +82,7 @@ const Login = ({ navigation }) => {
 
                         }
                         else {
-                            const response = await axios.get('http://10.105.51.160:3000/user', {
+                            const response = await axios.get('https://lol-2eal.onrender.com/user', {
                                 headers: {
                                     Authorization: `Bearer ${formattedToken}`
                                 }

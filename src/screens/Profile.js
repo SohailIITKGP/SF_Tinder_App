@@ -3,13 +3,13 @@ import React, { useEffect, useState } from 'react';
 import bg from '../../assets/Background1.png';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Profile = ({ navigation }) => {
     const [user, setUser] = useState({});
     const [errormsg, setErrormsg] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
-    const [receiverId, setReceiverId] = useState('');
+    const [partnerName, setPartnerName] = useState('');
+    const [partnerEmail, setPartnerEmail] = useState('');
     const [message, setMessage] = useState('');
     const [notifications, setNotifications] = useState([]);
     const [notificationVisible, setNotificationVisible] = useState(false);
@@ -24,64 +24,22 @@ const Profile = ({ navigation }) => {
             }
         }
         fetchData();
-        fetchNotifications(); 
     }, []);
 
-    const fetchNotifications = async () => {
+    const invitePromPartner = async () => {
         try {
-            const response = await axios.get('/fetchPromRequests', {
-                headers: {
-                    'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`
-                }
-            });
-            setNotifications(response.data.requests); 
-        } catch (error) {
-            console.error("Error fetching notifications:", error);
-        }
-    };
-
-    const sendPromRequest = async () => {
-        try {
-            const response = await axios.post('/requestPromNight', { receiverId }, {
-                headers: {
-                    'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`
-                }
-            });
+            const token = await AsyncStorage.getItem('token');
+            const response = await axios.post(
+                'https://lol-2eal.onrender.com/invitePromPartner',
+                { partnerName, partnerEmail },
+                { headers: { 'Authorization': `Bearer ${token}` } }
+            );
             setMessage(response.data.message);
             setModalVisible(false);
-            setReceiverId('');
+            setPartnerName('');
+            setPartnerEmail('');
         } catch (error) {
-            console.error("Error sending request:", error);
-            setMessage(error.response?.data?.message || 'Server error');
-        }
-    };
-
-    const acceptRequest = async (requestId) => {
-        try {
-            const response = await axios.post('/acceptPromNight', { requestId }, {
-                headers: {
-                    'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`
-                }
-            });
-            setMessage(response.data.message);
-            fetchNotifications(); 
-        } catch (error) {
-            console.error("Error accepting request:", error);
-            setMessage(error.response?.data?.message || 'Server error');
-        }
-    };
-
-    const rejectRequest = async (requestId) => {
-        try {
-            const response = await axios.post('/rejectPromNight', { requestId }, {
-                headers: {
-                    'Authorization': `Bearer ${await AsyncStorage.getItem('token')}`
-                }
-            });
-            setMessage(response.data.message);
-            fetchNotifications(); 
-        } catch (error) {
-            console.error("Error rejecting request:", error);
+            console.error("Error inviting prom partner:", error);
             setMessage(error.response?.data?.message || 'Server error');
         }
     };
@@ -91,17 +49,13 @@ const Profile = ({ navigation }) => {
             <ScrollView contentContainerStyle={{ flexGrow: 2 }} keyboardShouldPersistTaps="handled">
                 <View style={styles.container}>
                     <Image style={styles.patternbg} source={bg} />
-                    
-                    <View style={styles.notificationButtonContainer}>
-                        <Button title="🔔" onPress={() => setNotificationVisible(true)} />
-                    </View>
 
                     <View style={styles.container1}>
                         <View style={styles.profileCard}>
                             {user.profile_image ? (
-                                <Image 
-                                    source={{ uri: user.profile_image}} 
-                                    style={styles.profilePic} 
+                                <Image
+                                    source={{ uri: user.profile_image }}
+                                    style={styles.profilePic}
                                     onError={() => setErrormsg('Failed to load profile image')}
                                 />
                             ) : (
@@ -126,7 +80,7 @@ const Profile = ({ navigation }) => {
                         <Button title="Invite to Prom" onPress={() => setModalVisible(true)} />
                     </View>
 
-                    {/* Modal for sending prom request */}
+                    {/* Modal for inviting prom partner */}
                     <Modal
                         animationType="slide"
                         transparent={true}
@@ -134,43 +88,24 @@ const Profile = ({ navigation }) => {
                         onRequestClose={() => setModalVisible(false)}
                     >
                         <View style={styles.modalView}>
-                            <Text style={styles.modalText}>Send Prom Invitation</Text>
+                            <Text style={styles.modalText}>Invite to Prom</Text>
                             <TextInput
                                 style={styles.input}
-                                placeholder="Enter User ID"
-                                value={receiverId}
-                                onChangeText={setReceiverId}
+                                placeholder="Partner Name"
+                                value={partnerName}
+                                onChangeText={setPartnerName}
                             />
-                            <Button title="Send Request" onPress={sendPromRequest} />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Partner Email"
+                                value={partnerEmail}
+                                onChangeText={setPartnerEmail}
+                            />
+                            <Button title="Send Invitation" onPress={invitePromPartner} />
                             <Button title="Cancel" onPress={() => setModalVisible(false)} color="red" />
                             {message ? <Text style={styles.message}>{message}</Text> : null}
                         </View>
                     </Modal>
-
-                    {/* Notification Modal */}
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={notificationVisible}
-                        onRequestClose={() => setNotificationVisible(false)}
-                    >
-                        <View style={styles.modalView}>
-                            <Text style={styles.modalText}>Prom Requests</Text>
-                            {notifications.length > 0 ? (
-                                notifications.map((request) => (
-                                    <View key={request.id} style={styles.requestItem}>
-                                        <Text>{`Request from ${request.senderName}`}</Text>
-                                        <Button title="Accept" onPress={() => acceptRequest(request.id)} />
-                                        <Button title="Reject" onPress={() => rejectRequest(request.id)} color="red" />
-                                    </View>
-                                ))
-                            ) : (
-                                <Text>No new requests</Text>
-                            )}
-                            <Button title="Close" onPress={() => setNotificationVisible(false)} />
-                        </View>
-                    </Modal>
-
                 </View>
             </ScrollView>
         </KeyboardAvoidingView>
@@ -191,12 +126,6 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
         zIndex: -1,
-    },
-    notificationButtonContainer: {
-        position: 'absolute',
-        top: 40, 
-        right: 20,
-        zIndex: 10,
     },
     container1: {
         display: 'flex',
@@ -256,10 +185,7 @@ const styles = StyleSheet.create({
         padding: 35,
         alignItems: 'center',
         shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2
-        },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
@@ -267,6 +193,7 @@ const styles = StyleSheet.create({
     modalText: {
         marginBottom: 15,
         textAlign: 'center',
+        fontWeight: 'bold',
         fontSize: 18,
     },
     input: {
@@ -274,20 +201,11 @@ const styles = StyleSheet.create({
         borderColor: 'gray',
         borderWidth: 1,
         marginBottom: 15,
+        paddingLeft: 10,
         width: '80%',
-        paddingHorizontal: 10,
     },
     message: {
         marginTop: 10,
         color: 'green',
-    },
-    requestItem: {
-        marginBottom: 10,
-        padding: 10,
-        borderColor: '#ddd',
-        borderWidth: 1,
-        borderRadius: 5,
-        width: '100%',
-        alignItems: 'center',
     },
 });
